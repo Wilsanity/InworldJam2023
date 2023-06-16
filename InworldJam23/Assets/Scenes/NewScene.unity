@@ -1354,6 +1354,9 @@ GameObject:
   - component: {fileID: 5334666905766196393}
   - component: {fileID: 5334666905766196392}
   - component: {fileID: 5334666905766196391}
+  - component: {fileID: 5334666905766196397}
+  - component: {fileID: 5334666905766196396}
+  - component: {fileID: 5334666905766196395}
   m_Layer: 0
   m_Name: Castle Guard 02@Unarmed Equip Over Shoulder
   m_TagString: Player
@@ -1563,6 +1566,46 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &5334666905766196395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4702703478291148316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da643f124db82bd4182ce93aabd75f17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: {fileID: 5334666905766196397}
+--- !u!114 &5334666905766196396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4702703478291148316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 155101c7cd4078143b604bc019a011fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: {fileID: 5334666905766196397}
+--- !u!114 &5334666905766196397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4702703478291148316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8df0f4a726ba0f040886a32ab57cf33c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  health: 0
 --- !u!1 &5594217464928755124
 GameObject:
   m_ObjectHideFlags: 0
