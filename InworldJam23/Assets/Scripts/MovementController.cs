@@ -59,7 +59,7 @@ public class MovementController : MonoBehaviour
 	private float _speed = 4.0f;
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
-	private Vector3 momentum = Vector3.zero;
+	public Vector3 momentum = Vector3.zero;
 
 	// timeout deltatime
 	private float _jumpTimeoutDelta;
@@ -185,7 +185,7 @@ public class MovementController : MonoBehaviour
 			Move(AirSpeed);
 
 			//Add Momentum
-			controller.Move(momentum * Time.deltaTime);
+			controller.Move(momentum * Time.deltaTime + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
     }
 
@@ -261,13 +261,18 @@ public class MovementController : MonoBehaviour
 			inputDirection = transform.right * previousInput.x + transform.forward * previousInput.y;
 		}
 
-		// move the player
-		controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-
 		Animator.SetFloat("Speed", _speed);
 
 		if (state != MoveState.Fall)
+		{
 			momentum = inputDirection.normalized * (_speed);
+			// move the player
+			controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+		}
+		else
+		{
+			momentum += inputDirection.normalized * (_speed * Time.deltaTime);
+		}
 	}
 
 	private void Jump()
@@ -286,11 +291,11 @@ public class MovementController : MonoBehaviour
 			_jumpTimeoutDelta = Time.time + JumpTimeout;
 			_fallTimeoutDelta = Time.time + FallTimeout;
 
-			state = MoveState.Fall; 
+			state = MoveState.Fall;
 		}
 	}
 
-	float slideSpeed = 13.0f;
+	float slideSpeed = 20.0f;
 	float slideLength = 2.0f;
 	float currentslideSpeed;
 
@@ -313,7 +318,7 @@ public class MovementController : MonoBehaviour
 		slideTimeDelta += Time.deltaTime;
 
 		if (state != MoveState.Fall)
-			momentum = targetSpeed;
+			momentum = targetSpeed * 100;
 	}
 
 	private void EndSlide()
