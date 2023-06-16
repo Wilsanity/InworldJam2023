@@ -203,7 +203,7 @@ MonoBehaviour:
     m_Bits: 1
   IgnoreTag: Player
   CameraRadius: 0.2
-  DampingIntoCollision: 0
+  DampingIntoCollision: 1.06
   DampingFromCollision: 2
 --- !u!1 &483587320
 GameObject:
@@ -562,7 +562,7 @@ GameObject:
   - component: {fileID: 1448026588}
   m_Layer: 0
   m_Name: CameraRoot
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -594,7 +594,7 @@ GameObject:
   - component: {fileID: 2043704077}
   m_Layer: 0
   m_Name: VirtualFollowCam
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1390,7 +1390,7 @@ GameObject:
   - component: {fileID: 457354531239859250}
   m_Layer: 0
   m_Name: mixamorig:Hips
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2033,7 +2033,7 @@ GameObject:
   - component: {fileID: 8348381069316274345}
   m_Layer: 0
   m_Name: Guard03_Mesh
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

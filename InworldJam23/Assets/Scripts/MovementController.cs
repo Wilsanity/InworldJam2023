@@ -166,7 +166,7 @@ public class MovementController : MonoBehaviour
     {
 		if (Grounded && Time.time >= _fallTimeoutDelta)
 		{
-
+			Animator.SetBool("Jump", false);
 			state = MoveState.Walk;
 
 			if (isSprint)
@@ -185,7 +185,7 @@ public class MovementController : MonoBehaviour
 			Move(AirSpeed);
 
 			//Add Momentum
-			controller.Move((momentum *= 0.95f) * Time.deltaTime);
+			controller.Move(momentum * Time.deltaTime);
 		}
     }
 
@@ -264,10 +264,10 @@ public class MovementController : MonoBehaviour
 		// move the player
 		controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
-		
+		Animator.SetFloat("Speed", _speed);
 
 		if (state != MoveState.Fall)
-			momentum = inputDirection.normalized * (_speed * Time.deltaTime);
+			momentum = inputDirection.normalized * (_speed);
 	}
 
 	private void Jump()
@@ -276,6 +276,8 @@ public class MovementController : MonoBehaviour
 		{
 			if (Time.time < _jumpTimeoutDelta)
 				return;
+
+			Animator.SetBool("Jump", true);
 
 			//Jump 30% higher after a slide
 			float targetJumpHeight = state == MoveState.Slide ? JumpHeight * 1.3f : JumpHeight;
@@ -309,6 +311,9 @@ public class MovementController : MonoBehaviour
 
 		controller.Move(targetSpeed + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		slideTimeDelta += Time.deltaTime;
+
+		if (state != MoveState.Fall)
+			momentum = targetSpeed;
 	}
 
 	private void EndSlide()
