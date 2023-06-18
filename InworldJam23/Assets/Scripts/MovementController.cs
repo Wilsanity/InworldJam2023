@@ -1,18 +1,20 @@
 using UnityEngine;
 
+enum MoveState
+{
+	None,
+	Idle,
+	Walk,
+	Sprint,
+	Crouch,
+	Slide,
+	Jump,
+	Fall
+};
+
 public class MovementController : MonoBehaviour
 {
-	enum MoveState
-	{
-		None,
-		Idle,
-		Walk,
-		Sprint,
-		Crouch,
-		Slide,
-		Jump,
-		Fall
-	};
+	
 
 	[SerializeField] private MoveState state;
 
@@ -53,17 +55,21 @@ public class MovementController : MonoBehaviour
 	[Header("Character Controller")]
 	[SerializeField] private CharacterController controller = null;
 
-	private Vector2 previousInput;
-
-	//Movement
+	[Header("Movement")]
 	private float _speed = 4.0f;
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
-	public Vector3 momentum = Vector3.zero;
+	private Vector3 momentum = Vector3.zero;
 
 	// timeout deltatime
 	private float _jumpTimeoutDelta;
 	private float _fallTimeoutDelta;
+
+	[Header("Input")]
+	private Vector2 previousInput;
+
+	[SerializeField] private bool isSprint;
+	[SerializeField] private bool isCrouch;
 
 	private Animator animator;
 	public Animator Animator 
@@ -75,9 +81,6 @@ public class MovementController : MonoBehaviour
 		} 
 	}
 
-	[SerializeField] private bool isSprint;
-	[SerializeField] private bool isCrouch;
-
 	private Controls controls;
 
 	private Controls Controls
@@ -88,6 +91,8 @@ public class MovementController : MonoBehaviour
 			return controls = new Controls();
         }
     }
+
+
     public void Start()
     {
 		enabled = true;
@@ -184,8 +189,7 @@ public class MovementController : MonoBehaviour
 		{
 			Move(AirSpeed);
 
-			//Add Momentum
-			controller.Move(momentum * Time.deltaTime + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+			
 		}
     }
 
@@ -209,7 +213,7 @@ public class MovementController : MonoBehaviour
 
 	private void Sprint()
 	{
-		if (state == MoveState.Slide)
+		if (state == MoveState.Slide || state == MoveState.Fall || state == MoveState.Jump)
 			return;
 
 		isSprint = !isSprint;
@@ -271,7 +275,11 @@ public class MovementController : MonoBehaviour
 		}
 		else
 		{
+			momentum *= 0.995f;
+
 			momentum += inputDirection.normalized * (_speed * Time.deltaTime);
+
+			controller.Move(momentum * Time.deltaTime + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
 	}
 
@@ -282,6 +290,7 @@ public class MovementController : MonoBehaviour
 			if (Time.time < _jumpTimeoutDelta)
 				return;
 
+			isSprint = false;
 			Animator.SetBool("Jump", true);
 
 			//Jump 30% higher after a slide
@@ -300,6 +309,15 @@ public class MovementController : MonoBehaviour
 	float currentslideSpeed;
 
 	float slideTimeDelta;
+
+	private void StartSlide()
+	{
+		if (state != MoveState.Sprint)
+			return;
+
+		slideTimeDelta = 0;
+		state = MoveState.Slide;
+	}
 
 	private void Slide()
 	{
@@ -326,12 +344,5 @@ public class MovementController : MonoBehaviour
 		state = MoveState.Crouch;
 	}
 
-	private void StartSlide()
-	{
-		if (state != MoveState.Sprint)
-			return;
-
-		slideTimeDelta = 0;
-		state = MoveState.Slide;
-	}
+	
 }
