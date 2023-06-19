@@ -14,8 +14,6 @@ enum MoveState
 
 public class MovementController : MonoBehaviour
 {
-	
-
 	[SerializeField] private MoveState state;
 
 	[Header("Player")]
@@ -29,6 +27,8 @@ public class MovementController : MonoBehaviour
 	[SerializeField] private float AirSpeed = 2.0f;
 	[Tooltip("Acceleration and deceleration")]
 	[SerializeField] private float SpeedChangeRate = 10.0f;
+	[Tooltip("Rotation speed of the character model")]
+	[SerializeField] private float RotationSpeed = 10.0f;
 
 	[Space(10)]
 	[Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
@@ -71,18 +71,8 @@ public class MovementController : MonoBehaviour
 	[SerializeField] private bool isSprint;
 	[SerializeField] private bool isCrouch;
 
-	private Animator animator;
-	public Animator Animator 
-	{ 
-		get
-		{
-			if (animator != null) return animator;
-			return animator = GetComponent<Animator>();
-		} 
-	}
-
+	public AnimatorHandler animatorHandler;
 	private Controls controls;
-
 	private Controls Controls
     {
         get
@@ -117,7 +107,6 @@ public class MovementController : MonoBehaviour
     {
 		GroundedCheck();
 		ApplyGravity();
-
         switch (state)
         {
 			case (MoveState.None):
@@ -171,7 +160,6 @@ public class MovementController : MonoBehaviour
     {
 		if (Grounded && Time.time >= _fallTimeoutDelta)
 		{
-			Animator.SetBool("Jump", false);
 			state = MoveState.Walk;
 
 			if (isSprint)
@@ -263,22 +251,44 @@ public class MovementController : MonoBehaviour
 			inputDirection = transform.right * previousInput.x + transform.forward * previousInput.y;
 		}
 
-		Animator.SetFloat("Speed", _speed);
+		HandleRotation();
 
 		if (state != MoveState.Fall)
 		{
-			momentum = inputDirection.normalized * (_speed);
+			momentum = transform.forward * (_speed);
 			// move the player
-			controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+			controller.Move(transform.forward * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
 		else
 		{
 			momentum *= 0.995f;
 
-			momentum += inputDirection.normalized * (_speed * Time.deltaTime);
+			momentum += (transform.forward * previousInput.magnitude) * (_speed * Time.deltaTime);
 
 			controller.Move(momentum * Time.deltaTime + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
+
+		animatorHandler.UpdateAnimatorvalues(_verticalVelocity, previousInput.magnitude);
+		
+	}
+	
+	public void HandleRotation()
+    {
+        Vector3 targetDir = Camera.main.transform.forward * previousInput.y;
+        targetDir += Camera.main.transform.right * previousInput.x;
+
+		targetDir.Normalize();
+		targetDir.y = 0;
+
+		if (targetDir == Vector3.zero)
+			targetDir = transform.forward;
+
+		float rs = RotationSpeed;
+
+		Quaternion tr = Quaternion.LookRotation(targetDir);
+		Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, rs * Time.deltaTime);
+
+		transform.rotation = targetRotation;
 	}
 
 	private void Jump()
@@ -289,7 +299,6 @@ public class MovementController : MonoBehaviour
 				return;
 
 			isSprint = false;
-			Animator.SetBool("Jump", true);
 
 			//Jump 30% higher after a slide
 			float targetJumpHeight = state == MoveState.Slide ? JumpHeight * 1.3f : JumpHeight;
