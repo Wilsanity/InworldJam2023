@@ -585,6 +585,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 223921990}
   m_CullTransparentMesh: 1
+--- !u!1 &362967309
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 362967310}
+  - component: {fileID: 362967311}
+  m_Layer: 7
+  m_Name: LeftHandOverride
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &362967310
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362967309}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.012, y: 0.009, z: 0.085}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6914706646733740193}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &362967311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362967309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b41327e9d2ed3374b8c01fa89c19e98e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentOverride: {fileID: 362967310}
+  currentWeaponModel: {fileID: 0}
 --- !u!1 &366566228
 GameObject:
   m_ObjectHideFlags: 0
@@ -5579,7 +5625,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponSlots:
   - {fileID: 6078571992547578147}
-  - {fileID: 8260590261541227665}
+  - {fileID: 362967311}
 --- !u!4 &4887291710432743163
 Transform:
   m_ObjectHideFlags: 0
@@ -5997,6 +6043,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2875467954669027077}
+  - {fileID: 362967310}
   m_Father: {fileID: 1710900443882063502}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6232,7 +6279,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6914706646733740193}
-  - component: {fileID: 8260590261541227665}
   m_Layer: 7
   m_Name: mixamorig:LeftHandIndex1
   m_TagString: Untagged
@@ -6240,20 +6286,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &8260590261541227665
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8260590261541227664}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b41327e9d2ed3374b8c01fa89c19e98e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parentOverride: {fileID: 6914706646733740193}
-  currentWeaponModel: {fileID: 0}
 --- !u!1 &8266357754672514312
 GameObject:
   m_ObjectHideFlags: 0
