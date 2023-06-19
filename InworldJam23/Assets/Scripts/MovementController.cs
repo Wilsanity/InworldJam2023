@@ -187,9 +187,7 @@ public class MovementController : MonoBehaviour
 		}
 		else
 		{
-			Move(AirSpeed);
-
-			
+			Move(AirSpeed);			
 		}
     }
 
