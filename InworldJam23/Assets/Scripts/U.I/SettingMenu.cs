@@ -10,6 +10,9 @@ public class SettingMenu : MonoBehaviour
     public TMPro.TMP_Dropdown resolutionDropdown;
 
 
+    
+
+
     private void Start()
     {
         resolutions = Screen.resolutions;

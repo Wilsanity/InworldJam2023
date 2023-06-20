@@ -10,10 +10,7 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("");
     }
 
-    public void Settings()
-    {
-
-    }
+  
 
     public void QuiteGame()
     {
