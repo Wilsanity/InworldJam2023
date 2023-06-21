@@ -7,7 +7,7 @@ public class MainMenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadScene("");
+        SceneManager.LoadScene("1");
     }
 
   
@@ -17,5 +17,10 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
 
+    public void CreditScene()
+    {
+        SceneManager.LoadScene("2");
+
+    }
 
 }
