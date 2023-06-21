@@ -24,5 +24,6 @@ public class ItemObject : ScriptableObject
     public Image itemIcon;
 
     public GameObject itemModel;
+    public string attackAnimationString;
     //stats bonus
 }

@@ -12,8 +12,6 @@ public class Healthbar : MonoBehaviour
     public Sprite fullHeart;
     public Sprite emptyHeart;
 
-
-
     void Update()
     {
 

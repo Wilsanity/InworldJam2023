@@ -1,21 +1,7 @@
 using UnityEngine;
 
-enum MoveState
-{
-	None,
-	Idle,
-	Walk,
-	Sprint,
-	Crouch,
-	Slide,
-	Jump,
-	Fall
-};
-
 public class MovementController : MonoBehaviour
 {
-	[SerializeField] private MoveState state;
-
 	[Header("Player")]
 	[Tooltip("Move speed of the character in m/s")]
 	[SerializeField] private float MoveSpeed = 4.0f;
@@ -53,91 +39,29 @@ public class MovementController : MonoBehaviour
 	[SerializeField] private float Gravity = -15.0f;
 
 	[Header("Character Controller")]
-	[SerializeField] private CharacterController controller = null;
+	[SerializeField] public CharacterController controller = null;
 
 	[Header("Movement")]
 	private float _speed = 4.0f;
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
-	private Vector3 momentum = Vector3.zero;
-
-	// timeout deltatime
-	private float _jumpTimeoutDelta;
-	private float _fallTimeoutDelta;
-
-	[Header("Input")]
-	private Vector2 previousInput;
-
-	[SerializeField] private bool isSprint;
-	[SerializeField] private bool isCrouch;
 
 	public AnimatorHandler animatorHandler;
-	private Controls controls;
-	private Controls Controls
-    {
-        get
-        {
-			if(controls != null) { return controls; }
-			return controls = new Controls();
-        }
-    }
-
-
-    public void Start()
-    {
-		enabled = true;
-
-		Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
-		Controls.Player.Move.canceled += ctx => ResetMovement();
-
-		Controls.Player.Sprint.performed += ctx => Sprint();
-
-		Controls.Player.Jump.performed += ctx => Jump();
-
-		Controls.Player.Crouch.performed += ctx => StartSlide();
-
-		state = MoveState.Walk;
-	}
-
-	private void OnEnable() => Controls.Enable();
-
-	private void OnDisable() => Controls.Disable();
-
+	public InputHandler inputHandler;
+	
 	private void Update()
     {
 		GroundedCheck();
 		ApplyGravity();
-        switch (state)
-        {
-			case (MoveState.None):
-				break;
-			case (MoveState.Idle):
-				break;
-			case (MoveState.Walk):
-				Move(MoveSpeed);
-				break;
-			case (MoveState.Sprint):
-				Move(SprintSpeed);
-				break;
-			case (MoveState.Crouch):
-				Move(CrouchSpeed);
-				break;
-			case (MoveState.Slide):
-				Slide();
-				break;
-			case (MoveState.Fall):
-				Fall();
-				break;
-			default:
-				break;
-		}
 
+		if (inputHandler.isInteracting)
+			return;
+
+		if (animatorHandler.canRotate)
+			HandleRotation();
+
+		HandleMovement(MoveSpeed);
     }
-
-	private void SetMovement(Vector2 movement) => previousInput = movement;
-
-	private void ResetMovement() => previousInput = Vector2.zero;
-
 
 	private void GroundedCheck()
 	{
@@ -156,69 +80,10 @@ public class MovementController : MonoBehaviour
 		}
 	}
 
-	private void Fall()
+	private void HandleMovement(float targetSpeed)
     {
-		if (Grounded && Time.time >= _fallTimeoutDelta)
-		{
-			state = MoveState.Walk;
+		Vector2 previousInput = inputHandler.movementInput; 
 
-			if (isSprint)
-			{
-				isCrouch = false;
-				state = MoveState.Sprint;
-			}
-			else if (isCrouch)
-			{
-				isSprint = false;
-				state = MoveState.Crouch;
-			}
-		}
-		else
-		{
-			Move(AirSpeed);			
-		}
-    }
-
-	private void Crouch()
-	{
-		if (state == MoveState.Slide)
-			return;
-
-		isCrouch = !isCrouch;
-		isSprint = false;
-
-		if (isCrouch)
-		{
-			state = MoveState.Walk;
-		}
-		else if (state != MoveState.Fall)
-		{
-			state = MoveState.Crouch;
-		}
-	}
-
-	private void Sprint()
-	{
-		if (state == MoveState.Slide || state == MoveState.Fall || state == MoveState.Jump)
-			return;
-
-		isSprint = !isSprint;
-		isCrouch = false;
-
-		//No longer sprinting - change to walking
-		if (!isSprint)
-		{
-			state = MoveState.Walk;
-			return;
-		}
-		else if (state != MoveState.Fall)
-		{
-			state = MoveState.Sprint;
-		}
-	}
-
-	private void Move(float targetSpeed)
-    {
 		if (previousInput == Vector2.zero)
 			targetSpeed = 0.0f;
 
@@ -240,41 +105,17 @@ public class MovementController : MonoBehaviour
 		{
 			_speed = targetSpeed;
 		}
-		// normalise input direction
-		Vector3 inputDirection = new Vector3(previousInput.x, 0.0f, previousInput.y).normalized;
 
-		// note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
-		// if there is a move input rotate player when the player is moving
-		if (inputDirection != Vector3.zero)
-		{
-			// move
-			inputDirection = transform.right * previousInput.x + transform.forward * previousInput.y;
-		}
+		controller.Move(transform.forward * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
-		HandleRotation();
-
-		if (state != MoveState.Fall)
-		{
-			momentum = transform.forward * (_speed);
-			// move the player
-			controller.Move(transform.forward * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-		}
-		else
-		{
-			momentum *= 0.995f;
-
-			momentum += (transform.forward * previousInput.magnitude) * (_speed * Time.deltaTime);
-
-			controller.Move(momentum * Time.deltaTime + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-		}
-
-		animatorHandler.UpdateAnimatorvalues(_verticalVelocity, previousInput.magnitude);
-		
+		animatorHandler.UpdateAnimatorvalues(_verticalVelocity, previousInput.magnitude);		
 	}
 	
 	public void HandleRotation()
     {
-        Vector3 targetDir = Camera.main.transform.forward * previousInput.y;
+		Vector2 previousInput = inputHandler.movementInput;
+
+		Vector3 targetDir = Camera.main.transform.forward * previousInput.y;
         targetDir += Camera.main.transform.right * previousInput.x;
 
 		targetDir.Normalize();
@@ -289,67 +130,5 @@ public class MovementController : MonoBehaviour
 		Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, rs * Time.deltaTime);
 
 		transform.rotation = targetRotation;
-	}
-
-	private void Jump()
-    {
-		if (Grounded)
-		{
-			if (Time.time < _jumpTimeoutDelta)
-				return;
-
-			isSprint = false;
-
-			//Jump 30% higher after a slide
-			float targetJumpHeight = state == MoveState.Slide ? JumpHeight * 1.3f : JumpHeight;
-
-			_verticalVelocity = Mathf.Sqrt(targetJumpHeight * -2f * Gravity);						
-			_jumpTimeoutDelta = Time.time + JumpTimeout;
-			_fallTimeoutDelta = Time.time + FallTimeout;
-
-			state = MoveState.Fall;
-		}
-	}
-
-	float slideSpeed = 20.0f;
-	float slideLength = 2.0f;
-	float currentslideSpeed;
-
-	float slideTimeDelta;
-
-	private void StartSlide()
-	{
-		if (state != MoveState.Sprint)
-			return;
-
-		slideTimeDelta = 0;
-		state = MoveState.Slide;
-	}
-
-	private void Slide()
-	{
-		if (slideTimeDelta >= slideLength)
-		{
-			EndSlide();
-		}
-
-		float speed = Mathf.Lerp(slideSpeed, 1.0f, slideTimeDelta/slideLength);
-
-		//lerp slide speed -> 0 based on legth of slide
-
-		Vector3 targetSpeed = transform.forward * speed * Time.deltaTime;
-
-		controller.Move(targetSpeed + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-		slideTimeDelta += Time.deltaTime;
-
-		if (state != MoveState.Fall)
-			momentum = targetSpeed * 100;
-	}
-
-	private void EndSlide()
-	{
-		state = MoveState.Crouch;
-	}
-
-	
+	}	
 }

@@ -49,6 +49,7 @@ public class EnemyController : MonoBehaviour
         else
         {
             agent.isStopped = true;
+            agent.velocity = Vector3.zero;
             animator.SetFloat("Speed", 0);
             Attack();
         }
