@@ -5,21 +5,19 @@ using UnityEngine.UI;
 
 public class Healthbar : MonoBehaviour
 {
-    public int health;
-    public int numOfHearts;
+    public Health health;
 
     public Image[] hearts;
     public Sprite fullHeart;
     public Sprite emptyHeart;
 
-    void Update()
+    private void Start()
     {
+        health.OnHealthChanged += UpdateHealth;
+    }
 
-        if (health > numOfHearts)
-        {
-            health = numOfHearts;
-        }
-
+    void UpdateHealth(float health)
+    {
         for (int i = 0; i < hearts.Length; i++)
         {
             if (i < health)
@@ -29,14 +27,6 @@ public class Healthbar : MonoBehaviour
             else
             {
                 hearts[i].sprite = emptyHeart;
-            }
-            if (i < numOfHearts)
-            {
-                hearts[i].enabled = true;
-            }
-            else
-            {
-                hearts[i].enabled = false;
             }
         }
 

@@ -6,12 +6,20 @@ public class PlayerManager : MonoBehaviour
 {
     // Start is called before the first frame update
     InputHandler inputHandler;
+    MovementController controller;
+    Health health;
     Animator animator;
 
     private void Awake()
     {
         inputHandler = GetComponent<InputHandler>();
+        controller = GetComponent<MovementController>();
         animator = GetComponent<Animator>();
+    }
+
+    private void Start()
+    {
+        health.OnDeath += HandlePlayerDeath;
     }
 
     private void Update()
@@ -31,5 +39,13 @@ public class PlayerManager : MonoBehaviour
 
         //cameraManager.HandleAllCameraMovement();
     }
+
+    private void HandlePlayerDeath()
+    {
+        inputHandler.enabled = false;
+        controller.enabled = false;
+    }
+
+
 
 }

@@ -63,6 +63,8 @@ public class EnemyController : MonoBehaviour
             stats.stats.TryGetValue(Stats.Strength, out int damage);
             target.GetComponent<Damageable>().DealDamage(damage);
             _attackDeltaTime = Time.time + 1f/attackSpeed;
+
+            target.GetComponent<MovementController>().AddKnockback(transform.position, 25);
         }
     }
 
@@ -73,5 +75,15 @@ public class EnemyController : MonoBehaviour
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, visionRadius);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag.Equals("Player"))
+        {
+            target = other.transform;
+
+            Attack();
+        }
     }
 }

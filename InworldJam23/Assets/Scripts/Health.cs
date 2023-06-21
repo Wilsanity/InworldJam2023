@@ -32,7 +32,8 @@ public class Health : MonoBehaviour
     {
         value = Mathf.Max(value, 0);
 
-        health = Mathf.Min(health + value, maxHealth);        
+        health = Mathf.Min(health + value, maxHealth);
+        OnHealthChanged?.Invoke(health);
     }
 
     public void Remove(float value)
@@ -40,6 +41,8 @@ public class Health : MonoBehaviour
         value = Mathf.Max(value, 0);
 
         health = Mathf.Max(health - value, 0);
+
+        OnHealthChanged?.Invoke(health);
 
         if (health == 0)
         {

@@ -13,4 +13,15 @@ public class EntityStats: MonoBehaviour
 {
     [SerializedDictionary("Stat", "Amount")]
     public SerializedDictionary<Stats, int> stats;
+
+    public float GetStat(Stats statType)
+    {
+        foreach(var stat in stats)
+        {
+            if (stat.Key.Equals(statType))
+                return stat.Value;
+        }
+
+        return 0;
+    }
 }

@@ -130,5 +130,17 @@ public class MovementController : MonoBehaviour
 		Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, rs * Time.deltaTime);
 
 		transform.rotation = targetRotation;
-	}	
+	}
+
+	public void AddKnockback(Vector3 impactLocation, int strength)
+    {
+		Vector3 dir = transform.position - impactLocation;
+		dir.Normalize();
+
+		dir.y = 0.5f;
+
+		_verticalVelocity = -5f;
+
+		GetComponent<ImpactReceiver>().AddImpact(dir, strength);
+	}
 }
