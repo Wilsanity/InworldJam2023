@@ -15,3 +15,4 @@ MonoBehaviour:
   itemType: 5
   itemIcon: {fileID: 0}
   itemModel: {fileID: 8477004271797805927, guid: 0058c191706cec647940ce981487cf64, type: 3}
+  attackAnimationString: Attack1
