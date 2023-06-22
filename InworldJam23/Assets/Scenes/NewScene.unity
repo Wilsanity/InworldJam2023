@@ -22006,6 +22006,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: {fileID: 5334666905766196397}
+  animator: {fileID: 6355960161444428141}
 --- !u!114 &5334666905766196406
 MonoBehaviour:
   m_ObjectHideFlags: 0

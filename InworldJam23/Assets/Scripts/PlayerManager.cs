@@ -8,13 +8,12 @@ public class PlayerManager : MonoBehaviour
     InputHandler inputHandler;
     MovementController controller;
     public Health health;
-    Animator animator;
+    public Animator animator;
 
     private void Awake()
     {
         inputHandler = GetComponent<InputHandler>();
         controller = GetComponent<MovementController>();
-        animator = GetComponent<Animator>();
     }
 
     private void Start()
