@@ -7,7 +7,7 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     InputHandler inputHandler;
     MovementController controller;
-    Health health;
+    public Health health;
     Animator animator;
 
     private void Awake()
@@ -45,7 +45,4 @@ public class PlayerManager : MonoBehaviour
         inputHandler.enabled = false;
         controller.enabled = false;
     }
-
-
-
 }

@@ -44,16 +44,10 @@ public class Health : MonoBehaviour
 
         OnHealthChanged?.Invoke(health);
 
-        if (health == 0)
+        if (health <= 0)
         {
             OnDeath?.Invoke();
         }
-    }
-
-    private void HandleDeath()
-    {
-        print("A Player Died");
-        //gameObject.SetActive(false);
     }
 
     public float GetHealth()

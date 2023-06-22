@@ -16,14 +16,27 @@ public class EnemyController : MonoBehaviour
     public Transform target;
     public NavMeshAgent agent;
     public Animator animator;
+    public Health health;
+
+    public CharacterController knockbackController;
+    public ImpactReceiver knockbackReceiver;
 
     private void Start()
     {
-        
+        health.OnDeath += HandleDeath;
     }
 
     private void Update()
     {
+        if (knockbackReceiver.impacting)
+        {
+            agent.isStopped = true;
+            knockbackController.enabled = true;
+            return;
+        }
+        else
+            knockbackController.enabled = false;
+
         if (target == null)
         {
             var colliders = Physics.OverlapSphere(transform.position, visionRadius, playerLayerMask);
@@ -79,11 +92,25 @@ public class EnemyController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag.Equals("Player"))
+        if(other.tag.Equals("Weapon"))
         {
-            target = other.transform;
-
-            Attack();
+            AddKnockback(other.transform.parent.position, 25);
+            animator.SetTrigger("Hit");
+            GetComponent<Damageable>().DealDamage(1);
         }
+    }
+    public void AddKnockback(Vector3 impactLocation, int strength)
+    {
+        Vector3 dir = transform.position - impactLocation;
+        dir.Normalize();
+
+        dir.y = 0.5f;
+
+        GetComponent<ImpactReceiver>().AddImpact(dir, strength);
+    }
+
+    private void HandleDeath()
+    {
+        Destroy(gameObject);
     }
 }
